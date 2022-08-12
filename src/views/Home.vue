@@ -4,3 +4,18 @@
     <p>Esta é uma aplicação exemplo que utiliza autenticação com JWT</p>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      componentKey: 0,
+    };
+  },
+  methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
+  },
+};
+</script>

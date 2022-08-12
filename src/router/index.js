@@ -8,25 +8,30 @@ const routes = [
   {
     path: "/",
     name: "Login",
-    component: () => import("../views/Login.vue")
+    component: () => import("../views/Login.vue"),
   },
   {
     path: "/home",
     name: "Home",
-    component: Home
+    component: Home,
   },
- 
+
   {
     path: "/livros",
     name: "Livros",
-    component: () => import("../views/Livros.vue")
-  }
+    component: () => import("../views/Livros.vue"),
+  },
+  {
+    path: "/cadastro",
+    name: "Cadastros",
+    component: () => import("../views/Cadastro.vue"),
+  },
 ];
 
 const router = new VueRouter({
   mode: "history",
   base: "/",
-  routes
+  routes,
 });
 
 export default router;

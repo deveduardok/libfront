@@ -8,36 +8,40 @@
         <button v-on:click="deslogar" class="btn btn-danger pull-right">
           Logout
         </button>
-        <button
-          v-if="role === 'ROLE_ADMIN'"
-          v-on:click="redirect"
-          class="btn btn-primary pull-right"
-        >
-          CADASTRO
-        </button>
       </div>
     </div>
+    <form @submit.prevent="cadastrar">
+      <div class="form-group">
+        <label for="titulo">Título</label>
+        <input
+          type="text"
+          id="titulo"
+          class="form-control"
+          required
+          autofocus
+          v-model="titulo"
+        />
+      </div>
+      <div class="form-group">
+        <label for="autor">Autor</label>
+        <textarea id="autor" class="form-control" required v-model="autor">
+        </textarea>
+      </div>
+      <div class="form-group">
+        <label for="editora">Editora</label>
+        <textarea id="editora" class="form-control" required v-model="editora">
+        </textarea>
+      </div>
+      <div class="form-group">
+        <label for="ano">Ano</label>
+        <textarea id="ano" class="form-control" required v-model="ano">
+        </textarea>
+      </div>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">
+        Salvar
+      </button>
+    </form>
     <br />
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Id</th>
-          <th>Título</th>
-          <th>Autor</th>
-          <th>Editora</th>
-          <th>Ano</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="livro in livros" :key="livro.id">
-          <td>{{ livro.id }}</td>
-          <td>{{ livro.titulo }}</td>
-          <td>{{ livro.autor }}</td>
-          <td>{{ livro.editora }}</td>
-          <td>{{ livro.ano }}</td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </template>
 
@@ -52,7 +56,6 @@ export default {
       titulo: "",
       livro: "",
       livros: [],
-      role: "",
     };
   },
   computed: {
@@ -60,20 +63,16 @@ export default {
   },
   methods: {
     deslogar() {
-      localStorage.clear();
       store.commit("logout");
-      window.location.href = "http://localhost:8081/";
       this.atualizar();
-    },
-    redirect() {
-      window.location.href = "http://localhost:8081/cadastro";
     },
     alert() {
       alert("Sem permissão.");
     },
     cadastrar() {
-      if (store.state.role == "ROLE_ADMIN") {
-        const token = JSON.parse(localStorage.getItem("token"));
+      const role = localStorage.getItem("role");
+      if (role && role === "ROLE_ADMIN") {
+        const token = localStorage.getItem("token");
         axios
           .post(
             "http://localhost:8080/livro/cadastrar",
@@ -95,7 +94,7 @@ export default {
             this.autor = "";
             this.editora = "";
             this.ano = "";
-            this.atualizar();
+            window.location.href = "http://localhost:8081/livros";
           })
           .catch(() => this.alert());
       } else {
@@ -103,7 +102,8 @@ export default {
       }
     },
     atualizar() {
-      const token = localStorage.getItem("token");
+      const token = JSON.parse(localStorage.getItem("token"));
+
       axios
         .get("http://localhost:8080/livro/listar", {
           headers: {
@@ -111,16 +111,18 @@ export default {
           },
         })
         .then((res) => {
+          console.log(res);
           this.livros = res.data;
+          window.location.href = "http://localhost:8081/livros";
         })
         .catch((error) => {
           this.livros = [];
+          console.log(error);
         });
     },
   },
   created() {
     this.atualizar();
-    this.role = localStorage.getItem("role");
   },
 };
 </script>
